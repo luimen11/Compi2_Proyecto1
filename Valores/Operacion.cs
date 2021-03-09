@@ -140,6 +140,10 @@ namespace Proyecto1.Valores
             {
                 return (Int32)operandoIzq.getValor(ambito, arbol) > (Int32)operandoDer.getValor(ambito, arbol);
             }
+            else if (this.operador == Operador.MENOR)
+            {
+                return (Int32)operandoIzq.getValor(ambito, arbol) < (Int32)operandoDer.getValor(ambito, arbol);
+            }
             else if (this.operador == Operador.MAYORIG)
             {
                 return (Int32)operandoIzq.getValor(ambito, arbol) >= (Int32)operandoDer.getValor(ambito, arbol);

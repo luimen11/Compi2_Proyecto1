@@ -140,6 +140,9 @@ namespace Proyecto1.analizador
             NonTerminal salir = new NonTerminal("salir");
             NonTerminal sent_if = new NonTerminal("sent_if");
             NonTerminal sent_if2 = new NonTerminal("sent_if2");
+            NonTerminal bloque_if = new NonTerminal("bloque_if");
+            NonTerminal lista_elseif = new NonTerminal("lista_elseif");
+            NonTerminal sent_elseif = new NonTerminal("sent_elseif");
             NonTerminal sent_case = new NonTerminal("sent_case");
             NonTerminal lista_casos = new NonTerminal("lista_casos");
             NonTerminal caso = new NonTerminal("caso");
@@ -252,7 +255,7 @@ namespace Proyecto1.analizador
             instruccion.Rule = print + ";"
                             | read + PTCOMA
                             | asignacion + PTCOMA
-                            | sent_if + PTCOMA
+                            | sent_if
                             | sent_case + PTCOMA
                             | ciclo_for + PTCOMA
                             | ciclo_while + PTCOMA
@@ -264,6 +267,8 @@ namespace Proyecto1.analizador
                             | graficar + PTCOMA
                             | salir + PTCOMA
                             | graficar;
+
+            //instruccion.ErrorRule = SyntaxError + PTCOMA;
 
             instruccion_sin_ptc.Rule = print | read | asignacion | sent_if | sent_case | ciclo_for | ciclo_while | ciclo_repeat | bloque_compuesto | llamada_funcion | llamada_procedimiento | length_array | graficar | salir;
 
@@ -290,11 +295,24 @@ namespace Proyecto1.analizador
             #endregion
             //------------------------------------- CONDICIONES Y CICLOS----------------------------------------
             #region condicionales
-            sent_if.Rule = IF + expresion + THEN + sent_if;
+            sent_if.Rule = IF + PARIZQ + expresion + PARDER + THEN + sent_if2;
+            //sent_if.Rule = IF + PARIZQ + expresion + PARDER + THEN + bloque_if + lista_elseif;
 
-            sent_if2.Rule = instruccion
-                    | instruccion_sin_ptc + ELSE + sent_if
-                    | instruccion_sin_ptc + ELSE + instruccion;
+            bloque_if.Rule = BEGIN + instrucciones + END + PTCOMA
+                            | instruccion;
+
+            sent_if2.Rule = bloque_if + lista_elseif
+                          //| bloque_if + lista_elseif
+                          | bloque_if + ELSE + bloque_if
+                          | bloque_if + lista_elseif + ELSE + bloque_if
+                    //| instruccion_sin_ptc + ELSE + sent_if
+                    //| instruccion_sin_ptc + ELSE + instruccion
+                    ;
+            lista_elseif.Rule = MakeStarRule(lista_elseif, sent_elseif);
+
+            sent_elseif.Rule = ELSE + IF + PARIZQ + expresion + PARDER + THEN + bloque_if;
+
+
 
             sent_case.Rule = CASE + PARIZQ + expresion + PARDER + OF + lista_casos + END + PTCOMA
                      | CASE + PARIZQ + expresion + PARDER + OF + lista_casos + ELSE + instruccion + END + PTCOMA;

@@ -332,10 +332,98 @@ namespace Proyecto1.analizador
                     return new Asignacion(nodoInstruccion.ChildNodes.ElementAt(0).Token.Text, expresion(expre), lin, col);
 
                 case "graficar":
-                        return new Graficar(linea, columna);
+                    return new Graficar(linea, columna);
+
+                case "sent_if":
+                    ParseTreeNode cond = nodoInstruccion.ChildNodes.ElementAt(1);
+                    ParseTreeNode sent_if2 = nodoInstruccion.ChildNodes.ElementAt(3);
+                    LinkedList<Instruccion> instruccionesIf = new LinkedList<Instruccion>();
+                    LinkedList<Instruccion> instruccionesElse = new LinkedList<Instruccion>();
+                    LinkedList<If> lista_elseif = new LinkedList<If>();
+                    //instruccionesIf = bloque_if(nodoInstruccion.ChildNodes.ElementAt(3));
+
+                    //solo viene un bloque de instrucciones
+                    if (sent_if2.ChildNodes.Count == 2)
+                    {
+                        ParseTreeNode bloqueif = sent_if2.ChildNodes.ElementAt(0);
+                        ParseTreeNode listaelseif = sent_if2.ChildNodes.ElementAt(1);
+
+                        instruccionesIf = bloque_if(bloqueif);
+
+                        if (listaelseif.ChildNodes.Count > 0)
+                        {
+                            foreach (ParseTreeNode elseif in listaelseif.ChildNodes)
+                            {
+                                //MessageBox.Show("venga");
+                                ParseTreeNode cond2 = elseif.ChildNodes.ElementAt(2);
+                                ParseTreeNode bloqueif2 = elseif.ChildNodes.ElementAt(4);
+                                LinkedList<Instruccion> instruccionesIf2 = new LinkedList<Instruccion>();
+                                LinkedList<Instruccion> instruccionesElse2 = new LinkedList<Instruccion>();
+                                LinkedList<If> lista_elseif2 = new LinkedList<If>();
+
+                                instruccionesIf2 = bloque_if(bloqueif2);
+
+                                lista_elseif.AddLast(new If(expresion(cond2), instruccionesIf2, instruccionesElse2, lista_elseif2, 0, 0));
+                            }
+                        }
+                    }
+                    else if (sent_if2.ChildNodes.Count == 3)
+                    {
+                        ParseTreeNode bloqueif = sent_if2.ChildNodes.ElementAt(0);                        
+                        ParseTreeNode bloque_else = sent_if2.ChildNodes.ElementAt(2);
+
+                        instruccionesIf = bloque_if(bloqueif);
+                        instruccionesElse = bloque_if(bloque_else);                        
+                    }
+
+                    else if (sent_if2.ChildNodes.Count == 4)
+                    {
+                        ParseTreeNode bloqueif = sent_if2.ChildNodes.ElementAt(0);
+                        ParseTreeNode listaelseif = sent_if2.ChildNodes.ElementAt(1);
+                        ParseTreeNode bloque_else = sent_if2.ChildNodes.ElementAt(3);
+
+                        instruccionesIf = bloque_if(bloqueif);
+                        instruccionesElse = bloque_if(bloque_else);
+
+                        if (listaelseif.ChildNodes.Count > 0)
+                        {
+                            foreach (ParseTreeNode elseif in listaelseif.ChildNodes)
+                            {
+                                //MessageBox.Show("venga");
+                                ParseTreeNode cond2 = elseif.ChildNodes.ElementAt(2);
+                                ParseTreeNode bloqueif2 = elseif.ChildNodes.ElementAt(4);
+                                LinkedList<Instruccion> instruccionesIf2 = new LinkedList<Instruccion>();
+                                LinkedList<Instruccion> instruccionesElse2 = new LinkedList<Instruccion>();
+                                LinkedList<If> lista_elseif2 = new LinkedList<If>();
+
+                                instruccionesIf2 = bloque_if(bloqueif2);
+
+                                lista_elseif.AddLast(new If(expresion(cond2), instruccionesIf2, instruccionesElse2, lista_elseif2, 0, 0));
+                            }
+                        }
+
+                    }
+                    return new If(expresion(cond), instruccionesIf, instruccionesElse, lista_elseif, 0, 0);
                 default:
                     return new Print(expresiones(nodo.ChildNodes.ElementAt(1)), 0, 0, true); //solo para que corra
             }                        
+        }
+
+        public LinkedList<Instruccion> bloque_if(ParseTreeNode nodo)
+        {
+            //bloque_if.Rule = BEGIN + instrucciones + END                            
+            if (nodo.ChildNodes.Count == 3)
+            {
+                LinkedList<Instruccion> lista = instrucciones(nodo.ChildNodes.ElementAt(1));                
+                return lista;
+            }
+            //bloque_if.Rule = instruccion
+            else
+            {
+                LinkedList<Instruccion> lista = new LinkedList<Instruccion>();
+                lista.AddLast(instruccion(nodo.ChildNodes.ElementAt(0)));
+                return lista;
+            }
         }
 
         public LinkedList<Expresion> expresiones(ParseTreeNode nodo)
