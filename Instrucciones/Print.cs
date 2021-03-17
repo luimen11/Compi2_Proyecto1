@@ -32,7 +32,8 @@ namespace Proyecto1
 
             foreach (Expresion exp in expresiones)
             {
-                valor = exp.getValor(ambito, arbol);
+                
+                valor = exp.getValor(ambito, arbol);                
                 cadena = cadena + valor.ToString();
                 
             }            

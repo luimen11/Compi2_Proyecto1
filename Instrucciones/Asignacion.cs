@@ -5,6 +5,7 @@ using Proyecto1.Valores;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Windows.Forms;
 using static Proyecto1.Valores.Simbolo;
 
 namespace Proyecto1.Instrucciones
@@ -27,13 +28,13 @@ namespace Proyecto1.Instrucciones
         public object ejecutar(Ambito ambito, AST arbol)
         {
             object valor_asignado = this.valor.getValor(ambito, arbol);
-            Tipos tipo_asignado = this.valor.getTipo(ambito, arbol);
-
+            Tipos tipo_asignado = this.valor.getTipo(ambito, arbol);            
             if (ambito.existe(id))
-            {
-                Simbolo sim = ambito.obtenerSimbolo(id);
+            {                
+                Simbolo sim = ambito.obtenerSimbolo(id);                
                 if (sim.tipo == tipo_asignado)
                 {
+                    MessageBox.Show("tipos correctos");
                     sim.valor = valor_asignado;
                     ambito.modificar(id, sim);
                 }

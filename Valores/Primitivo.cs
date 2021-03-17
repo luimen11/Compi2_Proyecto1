@@ -23,7 +23,7 @@ namespace Proyecto1.Valores
             object valor = this.getValor(ambito, arbol);
             if (valor is bool)
             {
-                return Tipos.BOOL;
+                return Tipos.BOOLEAN;
             }
             else if (valor is string)
             {
@@ -31,11 +31,11 @@ namespace Proyecto1.Valores
             }
             else if (valor is int)
             {
-                return Tipos.INT;
+                return Tipos.INTEGER;
             }
             else if (valor is double)
             {
-                return Tipos.DOUBLE;
+                return Tipos.REAL;
             }
             else
             {

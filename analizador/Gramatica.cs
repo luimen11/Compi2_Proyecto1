@@ -14,11 +14,10 @@ namespace Proyecto1.analizador
         {
 
             #region ER
-            StringLiteral CADENA = new StringLiteral("cadena", "'");
+            StringLiteral CADENA = new StringLiteral("cadena", "'");            
             var ENTERO = new NumberLiteral("entero");
-            var DECIMAL = new RegexBasedTerminal("decimal", "[0-9]+'.'[0-9]+");
+            var DECIMAL = new RegexBasedTerminal("decimal", "[0-9][.]([0-9]+)");
             IdentifierTerminal ID = new IdentifierTerminal("id");
-
             ConstantTerminal BOOLEANO = new ConstantTerminal("booleano");
             BOOLEANO.Add("true", true);
             BOOLEANO.Add("false", false);
@@ -43,7 +42,6 @@ namespace Proyecto1.analizador
             var TYPE = ToTerm("type");
             var VOID = ToTerm("void");
             var INTEGER = ToTerm("integer");
-            var DOUBLE = ToTerm("double");
             var REAL = ToTerm("real");
             var CHAR = ToTerm("char");
             var BOOLEAN = ToTerm("boolean");
@@ -206,20 +204,20 @@ namespace Proyecto1.analizador
             //lista_ids.Rule = lista_ids + COMA + ID
             //| ID;
 
-            tipo_var.Rule = INTEGER | DOUBLE | REAL | CHAR | BOOLEAN | STRING | PARIZQ + expresion + PARDER | ID;
+            tipo_var.Rule = INTEGER | REAL | CHAR | BOOLEAN | STRING | ID;
             #endregion
             //-------------------------------- DECLARACIONES DE TIPOS----------------------------
             #region tipos
             bloque_tipos.Rule = TYPE + declaraciones_tipos;
 
-            declaraciones_tipos.Rule = this.MakePlusRule(declaraciones_tipos, declaracion_tipos);            
+            declaraciones_tipos.Rule = this.MakePlusRule(declaraciones_tipos, declaracion_tipos);
 
             declaracion_tipos.Rule = lista_ids + IGUAL + tipo_var + PTCOMA //declarando un tipo simple
                              | ID + IGUAL + ARRAY + CORIZQ + tipo_index + CORDER + OF + tipo_var + PTCOMA //declarando un tipo array
                              | ID + IGUAL + ARRAY + OF + tipo_var + PTCOMA //declarando un tipo array dinamico
                              | tipo_object + PTCOMA;
 
-            tipo_index.Rule = this.MakeListRule(tipo_index, ToTerm(","), index);            
+            tipo_index.Rule = this.MakeListRule(tipo_index, ToTerm(","), index);
 
             index.Rule = dato + PTO + PTO + dato;
 
@@ -265,8 +263,7 @@ namespace Proyecto1.analizador
                             | llamada_procedimiento + PTCOMA
                             | length_array + PTCOMA
                             | graficar + PTCOMA
-                            | salir + PTCOMA
-                            | graficar;
+                            | salir + PTCOMA;
 
             //instruccion.ErrorRule = SyntaxError + PTCOMA;
 
@@ -278,7 +275,7 @@ namespace Proyecto1.analizador
                  | WRITELN + "(" + lista_exprs + ")"
                  | WRITELN;
 
-            graficar.Rule = GRAFICARTS + PARIZQ + PARDER ;
+            graficar.Rule = GRAFICARTS + PARIZQ + PARDER;
 
             lista_exprs.Rule = lista_exprs + COMA + expresion_imprimible
                       | expresion_imprimible;
@@ -293,8 +290,8 @@ namespace Proyecto1.analizador
             salir.Rule = EXIT + PARIZQ + lista_expresiones + PARDER
                   | EXIT;
             #endregion
-            //------------------------------------- CONDICIONES Y CICLOS----------------------------------------
-            #region condicionales
+            //------------------------------------- IF - CASE----------------------------------------
+            #region if_case
             sent_if.Rule = IF + PARIZQ + expresion + PARDER + THEN + sent_if2;
             //sent_if.Rule = IF + PARIZQ + expresion + PARDER + THEN + bloque_if + lista_elseif;
 
@@ -312,8 +309,6 @@ namespace Proyecto1.analizador
 
             sent_elseif.Rule = ELSE + IF + PARIZQ + expresion + PARDER + THEN + bloque_if;
 
-
-
             sent_case.Rule = CASE + PARIZQ + expresion + PARDER + OF + lista_casos + END + PTCOMA
                      | CASE + PARIZQ + expresion + PARDER + OF + lista_casos + ELSE + instruccion + END + PTCOMA;
 
@@ -321,14 +316,15 @@ namespace Proyecto1.analizador
             //lista_casos=lista_casos caso
             //| caso
 
-            caso.Rule = expresion + DOSPTS + instruccion;
-
+            caso.Rule = expresion + DOSPTS + bloque_if;
+            #endregion
+            //---------------------------------------- CICLOS -----------------------------------------
+            #region ciclos
             ciclo_for.Rule = FOR + asignacion + TO + dato + DO + instruccion;
 
             ciclo_while.Rule = WHILE + PARIZQ + expresion + PARDER + DO + instruccion;
 
             ciclo_repeat.Rule = REPEAT + instrucciones + UNTIL + expresion;
-
             #endregion
             //-------------------------------------------FUNCIONES--------------------------------------------------
             #region funciones
@@ -383,14 +379,18 @@ namespace Proyecto1.analizador
             expresion_imprimible.Rule = expresion + DOSPTS + ENTERO + DOSPTS + ENTERO
                                | expresion;
 
-            dato.Rule = ID | CADENA | ENTERO | DECIMAL | BOOLEANO ;
+            dato.Rule = ID
+                       | CADENA 
+                       | ENTERO 
+                       | DECIMAL 
+                       | BOOLEANO;
             #endregion
 
             #endregion
 
             #region Preferencias
             this.Root = inicio;
-            MarkPunctuation("(", ")",";", ".", ",", ":");
+            MarkPunctuation("(", ")",";", ",", ":");
             #endregion
 
         }

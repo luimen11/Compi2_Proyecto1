@@ -36,24 +36,28 @@ namespace Proyecto1.Instrucciones
             if(this.valor != null)
             {                
                 valor_asignado = this.valor.getValor(ambito, arbol);
-                tipo_asignado = this.valor.getTipo(ambito, arbol);
+                tipo_asignado = this.valor.getTipo(ambito, arbol);                
             }
             else
             {                
                 tipo_asignado = tipo;
-                if(tipo == Tipos.BOOL)
+                if(tipo == Tipos.BOOLEAN)
                 {
                     valor_asignado = false;
                 }
-                else if(tipo == Tipos.INT)
+                else if(tipo == Tipos.INTEGER)
                 {
                     valor_asignado = 0;
                 }
-                else if(tipo == Tipos.DOUBLE)
+                else if(tipo == Tipos.REAL)
                 {
                     valor_asignado = 0.0;
                 }
                 else if(tipo == Tipos.STRING)
+                {
+                    valor_asignado = "";
+                }
+                else if (tipo == Tipos.CHAR)
                 {
                     valor_asignado = "";
                 }

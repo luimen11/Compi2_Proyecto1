@@ -119,13 +119,11 @@ namespace Proyecto1.analizador
             //inicio_bloques.Rule = PROGRAM + ID + ";" + bloques + bloque_principal;
             else
             {
-
                 LinkedList<Instruccion> lista = bloques(nodo.ChildNodes.ElementAt(2));
                 foreach (Instruccion a in bloque_principal(nodo.ChildNodes.ElementAt(3)))
                 {
                     lista.AddLast(a);
-                }
-                
+                }                
                 return lista;                
             }
         }
@@ -224,7 +222,7 @@ namespace Proyecto1.analizador
             Tipos tipo = tipo_var(nodo.ChildNodes.ElementAt(1));
             //obteniendo cada id y agregandolo a la lista
             foreach (ParseTreeNode n in nodo.ChildNodes[0].ChildNodes)
-            {
+            {                
                 Simbolo s = new Simbolo(n.Token.Text, tipo, n.Token.Location.Line, n.Token.Location.Column);
                 sims.AddLast(s);
             }
@@ -260,19 +258,21 @@ namespace Proyecto1.analizador
         
         public Tipos tipo_var(ParseTreeNode nodo)
         {
-            string tipo = nodo.ToString();
+            string tipo = nodo.ChildNodes.ElementAt(0).ToString().Split(' ')[0].ToLower();           
             switch (tipo)
             {
                 case "string":
                     return Tipos.STRING;
+                case "char":
+                    return Tipos.CHAR;
                 case "integer":
-                    return Tipos.INT;
+                    return Tipos.INTEGER;
                 case "real":
-                    return Tipos.DOUBLE;
+                    return Tipos.REAL;
                 case "boolean":
-                    return Tipos.BOOL;
+                    return Tipos.BOOLEAN;
                 default:
-                    return Tipos.INT;
+                    return Tipos.VOID;
             }
         }
 
@@ -495,22 +495,26 @@ namespace Proyecto1.analizador
         public Expresion dato(ParseTreeNode nodo)
         {
    
-            ParseTreeNode tipoDato1 = nodo.ChildNodes.ElementAt(0);                       
+            ParseTreeNode tipoDato1 = nodo.ChildNodes.ElementAt(0);
+            MessageBox.Show(tipoDato1.ToString());
             string ins = tipoDato1.ToString().Split("(")[1].ToLower();
+            MessageBox.Show("ins " + ins);
             object valor = tipoDato1.ToString().Split("(")[0].ToLower();
+            MessageBox.Show("valor " + valor.ToString());
             int linea = tipoDato1.Token.Location.Line;
-            int columna = tipoDato1.Token.Location.Column;
-            
+            int columna = tipoDato1.Token.Location.Column;            
             switch (ins)
-            {
+            {                
                 //dato.Rule =  CADENA
                 case "cadena)":                    
                     return new Cadena(valor, linea, columna);
 
-                case "entero)":                    
+                case "entero)":
+                    MessageBox.Show("entra a entero");
                     return new Primitivo(Convert.ToInt32(valor), linea, columna);
                 
-                case "decimal)":                    
+                case "decimal)":
+                    MessageBox.Show("entra a decimal");
                     return new Primitivo(Convert.ToDouble(valor), linea, columna);
 
                 case "booleano)":                    

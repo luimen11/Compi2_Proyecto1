@@ -3,6 +3,7 @@ using Proyecto1.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Windows.Forms;
 
 namespace Proyecto1.Valores
 {
@@ -21,11 +22,20 @@ namespace Proyecto1.Valores
         }
         public Simbolo.Tipos getTipo(Ambito ambito, AST arbol)
         {
-            return Simbolo.Tipos.STRING;
+            if(valor.ToString().Trim().Length > 1)
+            {                
+                return Simbolo.Tipos.STRING;
+            }
+            else
+            {
+                return Simbolo.Tipos.CHAR;
+            }
+            
         }
 
         public object getValor(Ambito ambito, AST arbol)
         {
+            //MessageBox.Show("valor"+valor.ToString());
             return valor;
         }
     }

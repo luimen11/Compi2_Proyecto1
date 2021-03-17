@@ -11,10 +11,10 @@ namespace Proyecto1.Valores
         public enum Tipos
         {
             STRING,
-            INT,
-            DOUBLE,
+            CHAR,
+            INTEGER,
             REAL,
-            BOOL,
+            BOOLEAN,
             VOID,
             OBJETO,
             FUNCTION,

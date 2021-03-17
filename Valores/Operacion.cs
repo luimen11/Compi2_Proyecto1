@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
+using static Proyecto1.Valores.Simbolo;
 
 namespace Proyecto1.Valores
 {
@@ -50,7 +51,27 @@ namespace Proyecto1.Valores
 
         public Simbolo.Tipos getTipo(Ambito ambito, AST arbol)
         {
-            return Simbolo.Tipos.BOOL;
+            object valor = this.getValor(ambito, arbol);
+            if (valor is bool)
+            {
+                return Tipos.BOOLEAN;
+            }
+            else if (valor is string)
+            {
+                return Tipos.STRING;
+            }
+            else if (valor is int)
+            {
+                return Tipos.INTEGER;
+            }
+            else if (valor is double)
+            {
+                return Tipos.REAL;
+            }
+            else
+            {
+                return Tipos.OBJETO;
+            }
         }
 
         public static Operador getOperador(string operador)
